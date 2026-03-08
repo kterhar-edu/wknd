@@ -76,7 +76,7 @@ const WeekendSlider = forwardRef(function WeekendSlider({ weekends, initialIndex
   // Only mount full WeekendCard for slides near the active one.
   // Everything else gets a cheap placeholder so mobile doesn't choke
   // on 150+ fully-rendered cards simultaneously.
-  const RENDER_BUFFER = 5;
+  const RENDER_BUFFER = 2;
 
   return (
     <div className="slider-container">

@@ -1,42 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+
+// No service worker — iOS Safari crashes with SW + base-path combos.
+// "Add to Home Screen" on iOS works purely via the apple-* meta tags.
+// The manifest.json (in /public) handles Android home screen install.
 
 export default defineConfig({
   base: '/wknd/',
-  plugins: [
-    react(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['icons/*.png'],
-      manifest: {
-        name: 'wknd',
-        short_name: 'wknd',
-        description: 'Weekend tracker',
-        theme_color: '#1a1a2e',
-        background_color: '#1a1a2e',
-        display: 'standalone',
-        orientation: 'portrait',
-        scope: '/wknd/',
-        start_url: '/wknd/',
-        icons: [
-          {
-            src: '/wknd/icons/icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/wknd/icons/icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg}'],
-        navigateFallback: '/wknd/index.html',
-      },
-    }),
-  ],
+  plugins: [react()],
 })

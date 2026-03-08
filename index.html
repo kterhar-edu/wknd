@@ -11,6 +11,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="wknd" />
     <link rel="apple-touch-icon" href="/wknd/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/wknd/manifest.json" />
+    <script>
+      // Remove any previously installed service worker (from an earlier build)
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(r => r.unregister());
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
