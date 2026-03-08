@@ -1,0 +1,168 @@
+/* Overlay */
+.add-event-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: overlay-in 0.2s ease-out;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal bottom sheet */
+.add-event-modal {
+  width: 100%;
+  max-width: 420px;
+  background: #1a1a2e;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: sheet-up 0.25s ease-out;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Header */
+.add-event-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-event-modal__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.add-event-modal__close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Form */
+.add-event-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.add-event-modal__row {
+  display: flex;
+  gap: 12px;
+}
+
+.add-event-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.add-event-modal__field--half {
+  flex: 1;
+}
+
+.add-event-modal__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.add-event-modal__optional {
+  text-transform: none;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.add-event-modal__input,
+.add-event-modal__select {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.add-event-modal__input:focus,
+.add-event-modal__select:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.add-event-modal__input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.add-event-modal__select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+/* Color picker */
+.add-event-modal__colors {
+  display: flex;
+  gap: 8px;
+}
+
+.add-event-modal__color-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.add-event-modal__color-btn--active {
+  border-color: white;
+  transform: scale(1.15);
+}
+
+/* Save button */
+.add-event-modal__save {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1a1a2e;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.add-event-modal__save:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.add-event-modal__save:not(:disabled):active {
+  transform: scale(0.98);
+  background: white;
+}

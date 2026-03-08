@@ -1,0 +1,79 @@
+.slider-container {
+  width: 90vw;
+  max-width: 380px;
+  height: 70vh;
+  position: relative;
+  display: flex;
+  gap: 16px;
+  z-index: 1;
+  padding-top: 20px;
+}
+
+.slider-container swiper-container {
+  width: 100%;
+  height: 100%;
+  display: block;
+  flex: 1;
+}
+
+.slider-container swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: #e0e0e8;
+  overflow: hidden;
+}
+
+.slider-scrollbar {
+  width: 28px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  touch-action: none;
+}
+
+.slider-scrollbar__track {
+  width: 4px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  position: relative;
+}
+
+.slider-scrollbar__thumb {
+  width: 12px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: top 0.1s ease-out;
+}
+
+.slider-scrollbar__labels {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  padding: 4px 0;
+}
+
+.slider-scrollbar__labels span {
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}

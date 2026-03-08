@@ -1,0 +1,40 @@
+.participant-avatars {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.participant-avatars__circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  margin-left: -8px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.participant-avatars__circle:last-child {
+  margin-left: 0;
+}
+
+.participant-avatars__initials {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.participant-avatars__img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.participant-avatars__overflow {
+  background: rgba(26, 26, 46, 0.3);
+}

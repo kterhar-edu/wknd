@@ -1,0 +1,24 @@
+.event-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  min-width: 0;
+}
+
+.event-chip__title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #1a1a2e;
+}
+
+.event-chip__time {
+  font-size: 0.6rem;
+  opacity: 0.6;
+  white-space: nowrap;
+  color: #1a1a2e;
+}

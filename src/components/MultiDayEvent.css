@@ -1,0 +1,19 @@
+.multi-day-event {
+  border-radius: 4px;
+  padding: 4px 3px;
+  display: flex;
+  align-items: center;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  min-width: 0;
+}
+
+.multi-day-event__title {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
