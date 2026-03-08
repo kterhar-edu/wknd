@@ -45,23 +45,17 @@ function AppInner() {
   }, [weekends, initialIndex, dispatch]);
 
   // Apply filters
-  const hasAnyFilter = filters.noPlans || filters.tag !== null;
+  const hasAnyFilter = filters.planFilter !== null;
 
   const filteredWeekends = useMemo(() => {
     if (!hasAnyFilter) return weekends;
 
     return weekends.filter(w => {
       const wd = state.data[w.id];
-      if (!wd) return !filters.noPlans; // no data = no plans
+      const hasEvents = wd?.events?.length > 0;
 
-      const hasEvents = wd.events.length > 0;
-
-      // "No Plans" filter: only show weekends with zero events
-      if (filters.noPlans && hasEvents) return false;
-
-      // Tag filter: only show weekends that have this tag active
-      if (filters.tag && !wd.tags[filters.tag]) return false;
-
+      if (filters.planFilter === 'noPlans') return !hasEvents;
+      if (filters.planFilter === 'hasPlans') return hasEvents;
       return true;
     });
   }, [weekends, state.data, filters, hasAnyFilter]);
@@ -110,7 +104,7 @@ function AppInner() {
       {view === 'slider' ? (
         filteredWeekends.length > 0 ? (
           <WeekendSlider
-            key={hasAnyFilter ? `filtered-${filters.noPlans}-${filters.tag}` : 'all'}
+            key={hasAnyFilter ? `filtered-${filters.planFilter}` : 'all'}
             ref={sliderRef}
             weekends={filteredWeekends}
             initialIndex={filteredInitialIndex}

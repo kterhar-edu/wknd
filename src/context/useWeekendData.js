@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { WeekendDataContext, WeekendDispatchContext } from './WeekendDataContext';
 
-const EMPTY_DATA = { events: [], tags: { travelling: false, celebration: false, holiday: false }, participants: [] };
+const EMPTY_DATA = { events: [], tags: { travelling: false, holiday: false }, participants: [] };
 
 export function useWeekendState() {
   return useContext(WeekendDataContext);

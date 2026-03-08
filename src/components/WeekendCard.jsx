@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useWeekendData, useDispatch } from '../context/useWeekendData';
 import { DAY_KEYS, getSingleDayEvents, getMultiDayEvents, sortEvents } from '../utils/eventHelpers';
 import DaySection from './DaySection';
@@ -28,33 +28,61 @@ export default function WeekendCard({ weekend }) {
   const events = sortEvents(weekendData.events);
   const multiDayEvents = getMultiDayEvents(events);
   const hasAnyEvents = events.length > 0;
-  const [showModal, setShowModal] = useState(false);
-  const addBtnRef = useRef(null);
 
-  // Use native event listener to bypass Swiper's event interception
+  const [showModal, setShowModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+
+  const addBtnRef = useRef(null);
+  const daysRef = useRef(null);
+  const eventsRef = useRef(events);
+  eventsRef.current = events;
+
+  // Bypass Swiper: native listener on the "+" add button
   const showModalRef = useRef(setShowModal);
   showModalRef.current = setShowModal;
 
   useEffect(() => {
     const btn = addBtnRef.current;
     if (!btn) return;
-
-    const handler = (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      showModalRef.current(true);
-    };
-
+    const handler = (e) => { e.stopPropagation(); e.preventDefault(); showModalRef.current(true); };
     btn.addEventListener('pointerdown', (e) => e.stopPropagation(), true);
     btn.addEventListener('click', handler, true);
+    return () => { btn.removeEventListener('click', handler, true); };
+  }, []);
 
-    return () => {
-      btn.removeEventListener('click', handler, true);
+  // Bypass Swiper: event delegation on days container for chip taps
+  const setEditingRef = useRef(setEditingEvent);
+  setEditingRef.current = setEditingEvent;
+
+  useEffect(() => {
+    const container = daysRef.current;
+    if (!container) return;
+    const handler = (e) => {
+      const chip = e.target.closest('[data-event-id]');
+      if (chip) {
+        e.stopPropagation();
+        e.preventDefault();
+        const eventId = chip.dataset.eventId;
+        const found = eventsRef.current.find(ev => ev.id === eventId);
+        if (found) setEditingRef.current(found);
+      }
     };
+    container.addEventListener('click', handler, true);
+    return () => container.removeEventListener('click', handler, true);
   }, []);
 
   const handleAddEvent = (event) => {
     dispatch({ type: 'ADD_EVENT', weekendId: weekend.id, event });
+  };
+
+  const handleUpdateEvent = (updatedEvent) => {
+    dispatch({ type: 'UPDATE_EVENT', weekendId: weekend.id, eventId: editingEvent.id, updates: updatedEvent });
+    setEditingEvent(null);
+  };
+
+  const handleDeleteEvent = () => {
+    dispatch({ type: 'DELETE_EVENT', weekendId: weekend.id, eventId: editingEvent.id });
+    setEditingEvent(null);
   };
 
   const cardClass = [
@@ -83,7 +111,7 @@ export default function WeekendCard({ weekend }) {
         </div>
       </div>
 
-      <div className="weekend-card__days">
+      <div ref={daysRef} className="weekend-card__days">
         {multiDayEvents.map(event => (
           <MultiDayEvent key={event.id} event={event} />
         ))}
@@ -117,6 +145,16 @@ export default function WeekendCard({ weekend }) {
           weekendId={weekend.id}
           onSave={handleAddEvent}
           onClose={() => setShowModal(false)}
+        />
+      )}
+
+      {editingEvent && (
+        <AddEventModal
+          weekendId={weekend.id}
+          initialEvent={editingEvent}
+          onSave={handleUpdateEvent}
+          onDelete={handleDeleteEvent}
+          onClose={() => setEditingEvent(null)}
         />
       )}
     </div>

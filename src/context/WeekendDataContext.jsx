@@ -1,7 +1,7 @@
 import { createContext, useReducer, useEffect } from 'react';
 import { loadState, saveState } from '../utils/storage';
 
-const DEFAULT_TAGS = { travelling: false, celebration: false, holiday: false };
+const DEFAULT_TAGS = { travelling: false, holiday: false };
 
 function createEmptyWeekendData(weekendId) {
   return {
@@ -134,7 +134,7 @@ function reducer(state, action) {
     case 'CLEAR_FILTERS':
       return {
         ...state,
-        filters: { noPlans: false, tag: null },
+        filters: { planFilter: null },
       };
 
     case 'SET_VIEW':
@@ -148,7 +148,7 @@ function reducer(state, action) {
 // Hydrate data from localStorage on startup (filters/view are always transient)
 const initialState = {
   data: loadState() ?? {},
-  filters: { noPlans: false, tag: null },
+  filters: { planFilter: null },
   view: 'slider',
 };
 

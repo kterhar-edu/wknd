@@ -15,8 +15,8 @@
 }
 
 .tag-toggle--active {
-  background: rgba(26, 26, 46, 0.1);
-  color: rgba(26, 26, 46, 0.85);
+  /* color/bg set via inline style for per-tag colors */
+  box-shadow: 0 0 0 1.5px currentColor;
 }
 
 .tag-toggle:active {

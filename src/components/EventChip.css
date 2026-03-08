@@ -5,6 +5,12 @@
   padding: 4px 8px;
   border-radius: 6px;
   min-width: 0;
+  cursor: pointer;
+  transition: filter 0.1s ease;
+}
+
+.event-chip:active {
+  filter: brightness(0.9);
 }
 
 .event-chip__title {

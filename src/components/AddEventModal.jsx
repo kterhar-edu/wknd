@@ -11,19 +11,22 @@ const DAY_OPTIONS = [
 
 const COLORS = ['#4A90D9', '#D94A90', '#4AD94A', '#D9A04A', '#904AD9', '#D94A4A'];
 
-export default function AddEventModal({ weekendId, onSave, onClose }) {
-  const [title, setTitle] = useState('');
-  const [startDay, setStartDay] = useState('saturday');
-  const [endDay, setEndDay] = useState('saturday');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [color, setColor] = useState(COLORS[Math.floor(Math.random() * COLORS.length)]);
+export default function AddEventModal({ weekendId, initialEvent, onSave, onDelete, onClose }) {
+  const isEditing = !!initialEvent;
+
+  const [title, setTitle] = useState(initialEvent?.title ?? '');
+  const [startDay, setStartDay] = useState(initialEvent?.startDay ?? 'saturday');
+  const [endDay, setEndDay] = useState(initialEvent?.endDay ?? 'saturday');
+  const [startTime, setStartTime] = useState(initialEvent?.startTime ?? '');
+  const [endTime, setEndTime] = useState(initialEvent?.endTime ?? '');
+  const [color, setColor] = useState(
+    initialEvent?.color ?? COLORS[Math.floor(Math.random() * COLORS.length)]
+  );
 
   const handleSave = () => {
     if (!title.trim()) return;
-
     onSave({
-      id: `e-${Date.now()}`,
+      id: initialEvent?.id ?? `e-${Date.now()}`,
       title: title.trim(),
       startDay,
       endDay,
@@ -38,10 +41,23 @@ export default function AddEventModal({ weekendId, onSave, onClose }) {
     <div className="add-event-overlay" onClick={onClose}>
       <div className="add-event-modal" onClick={e => e.stopPropagation()}>
         <div className="add-event-modal__header">
-          <h3 className="add-event-modal__title">New Event</h3>
-          <button className="add-event-modal__close" onClick={onClose}>
-            <Icon name="close" size={20} />
-          </button>
+          <h3 className="add-event-modal__title">
+            {isEditing ? 'Edit Event' : 'New Event'}
+          </h3>
+          <div className="add-event-modal__header-actions">
+            {isEditing && (
+              <button
+                className="add-event-modal__delete-btn"
+                onClick={onDelete}
+                aria-label="Delete event"
+              >
+                <Icon name="trash" size={18} />
+              </button>
+            )}
+            <button className="add-event-modal__close" onClick={onClose}>
+              <Icon name="close" size={20} />
+            </button>
+          </div>
         </div>
 
         <div className="add-event-modal__form">
@@ -65,7 +81,6 @@ export default function AddEventModal({ weekendId, onSave, onClose }) {
                 value={startDay}
                 onChange={e => {
                   setStartDay(e.target.value);
-                  // Keep end >= start
                   const dayOrder = { friday: 0, saturday: 1, sunday: 2 };
                   if (dayOrder[e.target.value] > dayOrder[endDay]) {
                     setEndDay(e.target.value);
@@ -96,7 +111,9 @@ export default function AddEventModal({ weekendId, onSave, onClose }) {
 
           <div className="add-event-modal__row">
             <div className="add-event-modal__field add-event-modal__field--half">
-              <label className="add-event-modal__label">Start Time <span className="add-event-modal__optional">(optional)</span></label>
+              <label className="add-event-modal__label">
+                Start Time <span className="add-event-modal__optional">(optional)</span>
+              </label>
               <input
                 className="add-event-modal__input"
                 type="time"
@@ -105,7 +122,9 @@ export default function AddEventModal({ weekendId, onSave, onClose }) {
               />
             </div>
             <div className="add-event-modal__field add-event-modal__field--half">
-              <label className="add-event-modal__label">End Time <span className="add-event-modal__optional">(optional)</span></label>
+              <label className="add-event-modal__label">
+                End Time <span className="add-event-modal__optional">(optional)</span>
+              </label>
               <input
                 className="add-event-modal__input"
                 type="time"
@@ -135,7 +154,7 @@ export default function AddEventModal({ weekendId, onSave, onClose }) {
           onClick={handleSave}
           disabled={!title.trim()}
         >
-          Add Event
+          {isEditing ? 'Update Event' : 'Add Event'}
         </button>
       </div>
     </div>,

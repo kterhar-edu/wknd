@@ -29,8 +29,9 @@ function getLabel(offset) {
   return `${Math.abs(offset)} Weekends Ago`;
 }
 
-export function generateWeekends(pastCount = 10, futureCount = 20) {
+export function generateWeekends() {
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const dayOfWeek = today.getDay(); // 0=Sun, 6=Sat
 
   // Find this Saturday
@@ -42,31 +43,51 @@ export function generateWeekends(pastCount = 10, futureCount = 20) {
   }
   thisSaturday.setHours(0, 0, 0, 0);
 
+  // First Saturday on or after Jan 1, 2026
+  const rangeStart = new Date(2026, 0, 1);
+  const startDow = rangeStart.getDay();
+  const firstSaturday = new Date(rangeStart);
+  firstSaturday.setDate(rangeStart.getDate() + ((6 - startDow + 7) % 7));
+
+  // Last Saturday on or before Dec 31, 2028
+  const rangeEnd = new Date(2028, 11, 31);
+  const endDow = rangeEnd.getDay();
+  const lastSaturday = new Date(rangeEnd);
+  lastSaturday.setDate(rangeEnd.getDate() - ((endDow - 6 + 7) % 7));
+
   const weekends = [];
+  let initialIndex = 0;
+  const cursor = new Date(firstSaturday);
 
-  for (let i = -pastCount; i <= futureCount; i++) {
-    const saturday = new Date(thisSaturday);
-    saturday.setDate(thisSaturday.getDate() + i * 7);
-
+  while (cursor <= lastSaturday) {
+    const saturday = new Date(cursor);
     const friday = new Date(saturday);
     friday.setDate(saturday.getDate() - 1);
-
     const sunday = new Date(saturday);
     sunday.setDate(saturday.getDate() + 1);
+
+    const offsetMs = saturday.getTime() - thisSaturday.getTime();
+    const offsetIndex = Math.round(offsetMs / (7 * 24 * 60 * 60 * 1000));
+
+    if (saturday.getTime() === thisSaturday.getTime()) {
+      initialIndex = weekends.length;
+    }
 
     weekends.push({
       id: formatISO(saturday),
       friday: new Date(friday),
       saturday: new Date(saturday),
       sunday: new Date(sunday),
-      label: getLabel(i),
+      label: getLabel(offsetIndex),
       dateRange: formatRange(friday, sunday),
       monthYear: formatMonthYear(saturday),
-      isThisWeekend: i === 0,
-      isPast: i < 0,
-      offsetIndex: i,
+      isThisWeekend: offsetIndex === 0,
+      isPast: offsetIndex < 0,
+      offsetIndex,
     });
+
+    cursor.setDate(cursor.getDate() + 7);
   }
 
-  return { weekends, initialIndex: pastCount };
+  return { weekends, initialIndex };
 }

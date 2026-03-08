@@ -2,9 +2,18 @@ import Icon from './icons/Icon';
 import './TagToggle.css';
 
 const TAG_CONFIG = {
-  travelling: { offIcon: 'house', onIcon: 'airplane', label: 'Travelling' },
-  celebration: { offIcon: 'calendar', onIcon: 'party', label: 'Celebration' },
-  holiday: { offIcon: 'briefcase', onIcon: 'flag', label: 'Holiday' },
+  travelling: {
+    icon: 'airplane',
+    label: 'Travelling',
+    activeColor: '#4A90D9',
+    activeBg: 'rgba(74,144,217,0.18)',
+  },
+  holiday: {
+    icon: 'flag',
+    label: 'Holiday',
+    activeColor: '#D9A04A',
+    activeBg: 'rgba(217,160,74,0.18)',
+  },
 };
 
 export default function TagToggle({ tag, active, onToggle }) {
@@ -17,8 +26,9 @@ export default function TagToggle({ tag, active, onToggle }) {
       onClick={() => onToggle(tag)}
       aria-label={`${config.label}: ${active ? 'on' : 'off'}`}
       title={config.label}
+      style={active ? { backgroundColor: config.activeBg, color: config.activeColor } : {}}
     >
-      <Icon name={active ? config.onIcon : config.offIcon} size={18} />
+      <Icon name={config.icon} size={18} />
     </button>
   );
 }
