@@ -73,12 +73,21 @@ const WeekendSlider = forwardRef(function WeekendSlider({ weekends, initialIndex
 
   const scrollProgress = weekends.length > 1 ? activeIndex / (weekends.length - 1) : 0;
 
+  // Only mount full WeekendCard for slides near the active one.
+  // Everything else gets a cheap placeholder so mobile doesn't choke
+  // on 150+ fully-rendered cards simultaneously.
+  const RENDER_BUFFER = 5;
+
   return (
     <div className="slider-container">
       <swiper-container ref={swiperRef} init="false">
-        {weekends.map((weekend) => (
+        {weekends.map((weekend, index) => (
           <swiper-slide key={weekend.id}>
-            <WeekendCard weekend={weekend} />
+            {Math.abs(index - activeIndex) <= RENDER_BUFFER ? (
+              <WeekendCard weekend={weekend} />
+            ) : (
+              <div className="weekend-card-placeholder" />
+            )}
           </swiper-slide>
         ))}
       </swiper-container>

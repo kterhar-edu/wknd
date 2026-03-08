@@ -25,6 +25,13 @@
   overflow: hidden;
 }
 
+.weekend-card-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background: #e0e0e8;
+}
+
 .slider-scrollbar {
   width: 28px;
   height: 100%;

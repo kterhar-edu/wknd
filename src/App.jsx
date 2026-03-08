@@ -18,8 +18,6 @@ function AppInner() {
   const view = useView();
 
   useEffect(() => {
-    dispatch({ type: 'INIT_DATA', weekendIds: weekends.map(w => w.id) });
-
     // Only seed demo data on first run (nothing in localStorage yet)
     const stored = loadState();
     const isFirstRun = !stored || Object.keys(stored).length === 0;
