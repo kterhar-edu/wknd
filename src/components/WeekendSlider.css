@@ -9,14 +9,16 @@
   padding-top: 20px;
 }
 
-.slider-container swiper-container {
+/* Swiper container */
+.slider-container .wknd-swiper {
   width: 100%;
   height: 100%;
   display: block;
   flex: 1;
 }
 
-.slider-container swiper-slide {
+/* Each virtual slide shell */
+.slider-container .wknd-slide {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,12 +27,15 @@
   overflow: hidden;
 }
 
-.weekend-card-placeholder {
-  width: 100%;
+/* Virtual slot div fills the slide */
+.slider-container .wknd-slide [data-wknd-id] {
   height: 100%;
+  width: 100%;
   border-radius: 16px;
-  background: #e0e0e8;
+  overflow: hidden;
 }
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
 
 .slider-scrollbar {
   width: 28px;
