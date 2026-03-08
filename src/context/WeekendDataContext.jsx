@@ -1,5 +1,5 @@
-import { createContext, useReducer, useEffect } from 'react';
-import { loadState, saveState } from '../utils/storage';
+import { createContext, useReducer, useEffect, useCallback, useRef } from 'react';
+import { loadAllWeekends, saveWeekend } from '../lib/db';
 
 const DEFAULT_TAGS = { travelling: false, holiday: false };
 
@@ -14,13 +14,9 @@ function createEmptyWeekendData(weekendId) {
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'INIT_DATA': {
-      const data = { ...state.data };
-      action.weekendIds.forEach(id => {
-        if (!data[id]) data[id] = createEmptyWeekendData(id);
-      });
-      return { ...state, data };
-    }
+
+    case 'LOAD_DATA':
+      return { ...state, data: action.data, isLoading: false };
 
     case 'TOGGLE_TAG': {
       const { weekendId, tag } = action;
@@ -29,10 +25,7 @@ function reducer(state, action) {
         ...state,
         data: {
           ...state.data,
-          [weekendId]: {
-            ...wd,
-            tags: { ...wd.tags, [tag]: !wd.tags[tag] },
-          },
+          [weekendId]: { ...wd, tags: { ...wd.tags, [tag]: !wd.tags[tag] } },
         },
       };
     }
@@ -74,10 +67,7 @@ function reducer(state, action) {
         ...state,
         data: {
           ...state.data,
-          [weekendId]: {
-            ...wd,
-            events: wd.events.filter(e => e.id !== eventId),
-          },
+          [weekendId]: { ...wd, events: wd.events.filter(e => e.id !== eventId) },
         },
       };
     }
@@ -125,17 +115,11 @@ function reducer(state, action) {
 
     case 'SET_FILTER': {
       const { filter, value } = action;
-      return {
-        ...state,
-        filters: { ...state.filters, [filter]: value },
-      };
+      return { ...state, filters: { ...state.filters, [filter]: value } };
     }
 
     case 'CLEAR_FILTERS':
-      return {
-        ...state,
-        filters: { planFilter: null },
-      };
+      return { ...state, filters: { planFilter: null } };
 
     case 'SET_VIEW':
       return { ...state, view: action.view };
@@ -145,23 +129,61 @@ function reducer(state, action) {
   }
 }
 
-// Hydrate data from localStorage on startup (filters/view are always transient)
 const initialState = {
-  data: loadState() ?? {},
+  data: {},
   filters: { planFilter: null },
   view: 'slider',
+  isLoading: true,
 };
 
 export const WeekendDataContext = createContext(null);
 export const WeekendDispatchContext = createContext(null);
 
-export function WeekendDataProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+export function WeekendDataProvider({ user, children }) {
+  const [state, rawDispatch] = useReducer(reducer, initialState);
 
-  // Persist data to localStorage on every change
+  // Refs so interval callbacks always see current values
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const dirtyRef = useRef(new Set()); // weekendIds changed since last flush
+
+  // ── Load user's data from Supabase on mount ──────────────────────────────
   useEffect(() => {
-    saveState(state.data);
-  }, [state.data]);
+    loadAllWeekends()
+      .then(data => rawDispatch({ type: 'LOAD_DATA', data }))
+      .catch(err => {
+        console.error('Failed to load weekend data:', err);
+        rawDispatch({ type: 'LOAD_DATA', data: {} });
+      });
+  }, [user.id]);
+
+  // ── Wrapped dispatch: tracks which weekends are dirty ────────────────────
+  const dispatch = useCallback((action) => {
+    rawDispatch(action);
+    if (action.weekendId) dirtyRef.current.add(action.weekendId);
+  }, []);
+
+  // ── Flush dirty weekends to Supabase every 1.5 s ────────────────────────
+  useEffect(() => {
+    const flush = () => {
+      const ids = [...dirtyRef.current];
+      if (!ids.length) return;
+      dirtyRef.current.clear();
+      ids.forEach(weekendId => {
+        const wd = stateRef.current.data[weekendId];
+        if (wd) saveWeekend(user.id, weekendId, wd).catch(console.error);
+      });
+    };
+
+    const intervalId = setInterval(flush, 1500);
+    window.addEventListener('beforeunload', flush);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('beforeunload', flush);
+      flush(); // flush on unmount too
+    };
+  }, [user.id]);
 
   return (
     <WeekendDataContext.Provider value={state}>
