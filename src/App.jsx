@@ -148,21 +148,26 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    // Handles fresh load AND magic-link redirect (token in URL hash)
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // onAuthStateChange always fires INITIAL_SESSION first (synchronously from
+    // localStorage), so we no longer need a separate getSession() call.
+    // Using getSession() alone risked a permanent blank screen if it threw or
+    // timed out — this pattern is guaranteed to resolve.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
-      setAuthLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      if (event === 'INITIAL_SESSION') setAuthLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Return null (blank) while checking for an existing session — avoids flash
-  if (authLoading) return null;
+  // Show the logo while we confirm the session — never a blank white screen
+  if (authLoading) return (
+    <div className="auth-gate">
+      <div className="auth-gate__card">
+        <h1 className="auth-gate__logo">wknd</h1>
+      </div>
+    </div>
+  );
 
   if (!session) return <AuthGate />;
 
