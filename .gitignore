@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+# Explicitly block all variants of the env file (*.local covers .env.local,
+# but not accidental .txt copies that contain real credentials)
+.env.local.txt
+.env*.txt
 
 # Claude Code session data
 .claude/
