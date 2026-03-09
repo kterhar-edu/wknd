@@ -1,13 +1,15 @@
 import { supabase } from './supabase';
 
 /**
- * Load all weekend rows for the currently authenticated user.
- * Returns an object keyed by weekend_id matching the existing state shape.
+ * Load all weekend rows for the given user.
+ * The .eq() filter is defence-in-depth — RLS already enforces this server-side,
+ * but an explicit filter means we'd get 0 rows even if RLS were misconfigured.
  */
-export async function loadAllWeekends() {
+export async function loadAllWeekends(userId) {
   const { data, error } = await supabase
     .from('weekend_data')
-    .select('weekend_id, events, tags, participants');
+    .select('weekend_id, events, tags, participants')
+    .eq('user_id', userId);
 
   if (error) throw error;
 

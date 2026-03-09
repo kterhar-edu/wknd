@@ -69,6 +69,7 @@ export default function AddEventModal({ weekendId, initialEvent, onSave, onDelet
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder="What's happening?"
+              maxLength={120}
               autoFocus
             />
           </div>

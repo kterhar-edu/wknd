@@ -149,7 +149,7 @@ export function WeekendDataProvider({ user, children }) {
 
   // ── Load user's data from Supabase on mount ──────────────────────────────
   useEffect(() => {
-    loadAllWeekends()
+    loadAllWeekends(user.id)
       .then(data => rawDispatch({ type: 'LOAD_DATA', data }))
       .catch(err => {
         console.error('Failed to load weekend data:', err);

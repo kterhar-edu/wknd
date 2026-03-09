@@ -1,6 +1,16 @@
 import { useWeekendData } from '../context/useWeekendData';
 import './ParticipantAvatars.css';
 
+// Only allow https: and data: image URLs — blocks javascript: and other schemes
+const isSafeImageUrl = (url) => {
+  try {
+    const { protocol } = new URL(url);
+    return protocol === 'https:' || protocol === 'data:';
+  } catch {
+    return false;
+  }
+};
+
 const MAX_VISIBLE = 4;
 
 export default function ParticipantAvatars({ weekendId }) {
@@ -20,7 +30,7 @@ export default function ParticipantAvatars({ weekendId }) {
           style={{ backgroundColor: p.color, zIndex: MAX_VISIBLE - i }}
           title={p.name}
         >
-          {p.avatarUrl ? (
+          {p.avatarUrl && isSafeImageUrl(p.avatarUrl) ? (
             <img src={p.avatarUrl} alt={p.name} className="participant-avatars__img" />
           ) : (
             <span className="participant-avatars__initials">{p.initials}</span>
